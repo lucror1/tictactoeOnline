@@ -1,0 +1,36 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch TelnetClient",
+            "request": "launch",
+            "mainClass": "TelnetClient",
+            "projectName": "running_bcf49790"
+        },
+        {
+            "type": "java",
+            "name": "Launch TelnetServer",
+            "request": "launch",
+            "mainClass": "TelnetServer",
+            "projectName": "running_bcf49790"
+        },
+        {
+            "name": "Launch Client + Server",
+            "type": "python",
+            "request": "launch",
+            "program": "launch.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
