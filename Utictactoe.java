@@ -1,9 +1,6 @@
 import java.util.ArrayList;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-
-import javax.lang.model.util.ElementScanner14;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -12,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
+
 public class Utictactoe extends Application
 {
     private ArrayList<ArrayList<Integer>> winList;
@@ -41,18 +39,16 @@ public class Utictactoe extends Application
         }
     }
     public static void main(String[] args) throws Exception {
-
-
         launch(args);
     }
     
     @Override
     public void start(Stage primary)
     {
-
         makegrid();
         bp.setCenter(BigGrid);
         Scene scene = new Scene(bp, 800, 500);
+        scene.getStylesheets().add("stylesheet.css");
         primary.setScene(scene);
         primary.show();
     }
@@ -163,6 +159,7 @@ public class Utictactoe extends Application
             Text Win = new Text();
             String x="X Wins!";
             Win.setText(x);
+            Win.setId("fancytext");
             bp.setRight(Win);
         }
         else if(winner == 2)
@@ -170,6 +167,7 @@ public class Utictactoe extends Application
             Text Win = new Text();
             String x="O Wins!";
             Win.setText(x);
+            Win.setId("fancytext");
             bp.setRight(Win);
         }
         else if(winner == 3)
@@ -177,12 +175,14 @@ public class Utictactoe extends Application
             Text Win = new Text();
             String x="Draw";
             Win.setText(x);
+            Win.setId("fancytext");
             bp.setRight(Win);
         }
         else{
             Text Win = new Text();
             String x="";
             Win.setText(x);
+            Win.setId("fancytext");
             bp.setRight(Win);
         }
     }
@@ -277,6 +277,7 @@ public class Utictactoe extends Application
             Text Win = new Text();
             String x="X";
             Win.setText(x);
+            Win.setId("fancytext");
             BigGrid.getChildren().remove(result);
             BigGrid.add(Win,number%3,number/3);
             System.out.println(winList);
@@ -289,6 +290,7 @@ public class Utictactoe extends Application
             Text Win = new Text();
             String x="O";
             Win.setText(x);
+            Win.setId("fancytext");
             BigGrid.getChildren().remove(result);
             BigGrid.add(Win,number%3,number/3);
             System.out.println(winList);
@@ -301,6 +303,7 @@ public class Utictactoe extends Application
             Text Win = new Text();
             String x="";
             Win.setText(x);
+            Win.setId("fancytext");
             BigGrid.getChildren().remove(result);
             BigGrid.add(Win,number%3,number/3);
             System.out.println(winList);
