@@ -12,25 +12,9 @@
         },
         {
             "type": "java",
-            "name": "Launch TelnetClient",
-            "request": "launch",
-            "mainClass": "TelnetClient",
-            "projectName": "running_bcf49790"
-        },
-        {
-            "type": "java",
-            "name": "Launch TelnetServer",
-            "request": "launch",
-            "mainClass": "TelnetServer",
-            "projectName": "running_bcf49790"
-        },
-        {
             "name": "Launch Client + Server",
-            "type": "python",
             "request": "launch",
-            "program": "launch.py",
-            "console": "integratedTerminal",
-            "justMyCode": true
+            "mainClass": "run.Launch"
         }
     ]
 }
