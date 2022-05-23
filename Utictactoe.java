@@ -80,6 +80,7 @@ public class Utictactoe extends Application
         BigGrid.setHgap(20); 
         BigGrid.setVgap(20);
     }
+    // This is for the super-board
     public void check2()
     {
         int winner =0;
@@ -186,6 +187,7 @@ public class Utictactoe extends Application
             bp.setRight(Win);
         }
     }
+    // This is for sub-boards
     public void check(int number)
     {
         int winner=0;
