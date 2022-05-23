@@ -51,6 +51,8 @@
 * Current turn (1 byte)
   * 1 - X identity
   * 2 - O identity
+* Required subboard (1 byte)
+  * 0-9, where 1-8 represent the linearized version of the subboards and 9 is wild
 * Board state (91 bytes)
   * Victory flag (1 byte)
     * 0 - no one has won the entire game
