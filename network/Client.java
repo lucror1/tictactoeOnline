@@ -12,12 +12,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-// TODO: check what happens if a bunch of packets arrive all at once
 public class Client {
     private String host = null;
     private int port = -1;
-
-    // TODO: merge client handlers
 
     // Need to know the group so it can be shut down
     private EventLoopGroup group;
@@ -81,8 +78,6 @@ public class Client {
              .handler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
-                    // TODO: merge client handlers
-                    ch.pipeline().addLast(new OutboundClientHandler(c));
                     ch.pipeline().addLast(new InboundClientHandler(c));
                 }
              });

@@ -7,7 +7,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-// TODO: check what happens if a bunch of packets arrive all at once
 public class Server {
     private int port;
 
@@ -21,61 +20,8 @@ public class Server {
     private boolean isXConnected = false;
     private boolean isOConnected = false;
 
-    // DEBUG
-    // TODO: REMOVE
-    private final byte n = Settings.BOARD_WINNER_NULL;
-    private final byte x = Settings.BOARD_WINNER_X;
-    private final byte o = Settings.BOARD_WINNER_O;
-
     // Store the board
     private byte[][] superBoard = new byte[9][9];
-    /* private byte[][] superBoard = {
-        {
-            o, x, o,
-            x, o, o, // Draw
-            x, o, x
-        },
-        {
-            x, x, o,
-            x, o, x, // X
-            x, n, n
-        },
-        {
-            n, n, o,
-            n, o, n, // Null
-            n, n, n
-        },
-        {
-            n, n, n,
-            n, n, n, // Null
-            n, n, n
-        },
-        {
-            n, x, o,
-            n, x, o, // X
-            o, x, n
-        },
-        {
-            x, o, x,
-            x, o, o, // Draw
-            o, x, x
-        },
-        {
-            n, x, n,
-            n, x, n, // O
-            o, o, o
-        },
-        {
-            n, o, x,
-            o, x, x, // X
-            x, n, x
-        },
-        {
-            o, x, n,
-            o, n, x, // O
-            o, x, n
-        }
-    }; */
 
     // Store the subboard that the player has to play on
     // 9 is wild
@@ -123,7 +69,7 @@ public class Server {
          .childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(new OutboundServerHandler(s), new InboundServerHandler(s));
+                ch.pipeline().addLast(new InboundServerHandler(s));
             }
         });
 
