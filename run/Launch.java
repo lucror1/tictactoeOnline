@@ -11,6 +11,7 @@ public class Launch {
         // Then go to the "Run and Debug" menu in VSCode (left side of screen)
         // Select "Launch Client + Server" from the drop down in the menu
         "network.Server",
+        "Utictactoe.java",
         "Utictactoe.java"
     };
 

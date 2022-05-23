@@ -20,14 +20,8 @@ public class InboundClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) {
-        //System.out.println("channelActive.");
-    }
-
-    @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ByteBuf buf = (ByteBuf) msg;
-        //System.out.println("chanelRead.");
 
         // Switch on the first byte of buf
         switch (buf.readByte()) {
@@ -53,6 +47,13 @@ public class InboundClientHandler extends ChannelInboundHandlerAdapter {
         // Read the identity in
         // The first byte has already been consumed by the switch statement
         byte identity = buf.readByte();
+
+        // Hacky way to prevent a bug that I can't track down
+        // Probably has to do with the server sending 2 packets around the same time
+        // And the packets getting mixed up or combined
+        if (identity == Settings.BOARD_WINNER_NULL) {
+            return;
+        }
 
         // Set the client's identity
         client.setIdentity(identity);
@@ -86,19 +87,22 @@ public class InboundClientHandler extends ChannelInboundHandlerAdapter {
             // Update the creation and update time
             client.setTimeBoardCreated(timeBoardCreated);
             client.setTimeLastUpdated(timeBoardCreated);
+
+            // Also set a flag so the client knows to pull it
+            client.setBoardUpdated(true);
         }
 
         // If the time is from before the last time that the client updated the board, ignore it
         else if (timeLastUpdated < client.getTimeLastUpdated()) {
-            System.out.println("too old");
-            System.out.println(client.getTimeLastUpdated());
-            System.out.println(timeLastUpdated);
             return;
         }
 
         // If it is newer, update the client's last updated time
         else {
             client.setTimeLastUpdated(timeLastUpdated);
+
+            // Also set a flag so the client knows to pull it
+            client.setBoardUpdated(true);
         }
 
         // Read the current turn
@@ -124,12 +128,6 @@ public class InboundClientHandler extends ChannelInboundHandlerAdapter {
                 newBoard[i][j] = buf.readByte();
             }
         }
-
-        /* System.out.println("***");
-        for (byte[] b : newBoard) {
-            System.out.println(Arrays.toString(b));
-        }
-        System.out.println("***"); */
 
         // Write all the information to the client
         client.setWinner(winner);
@@ -160,5 +158,8 @@ public class InboundClientHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+    }
 }

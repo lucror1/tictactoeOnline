@@ -173,7 +173,23 @@ public class Server {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        Server server = new Server();
+        // If a custom port was passed in, use it
+        int port = Settings.DEFAULT_PORT;
+        if (args.length >= 1) {
+            try {
+                port = Integer.parseInt(args[0]);
+            }
+            catch (NumberFormatException ex) {
+                System.out.println("Invalid port.");
+                return;
+            }
+            if (port < 1 || port > 65535) {
+                System.out.println("Invalid port.");
+                return;
+            }
+        }
+
+        Server server = new Server(port);
         server.listen();
     }
 }

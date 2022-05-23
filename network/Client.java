@@ -6,6 +6,7 @@ import java.util.Random;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -48,6 +49,13 @@ public class Client {
     private int timeBoardCreated = 0;
     private int timeLastUpdated = 0;
 
+    // This flag is for the UI to know if the board has been updated or not
+    private boolean boardUpdated = false;
+
+    // The last channel future
+    // Used to make sure icky stuff doesn't happen with simultaneous requests
+    private ChannelFuture lastChannelFuture;
+
     public Client(String host, int port) {
         if (port < 1 || port > 65535) {
             throw new IllegalArgumentException("port is invalid");
@@ -61,7 +69,7 @@ public class Client {
         this(host, Settings.DEFAULT_PORT);
     }
 
-    public void connect() throws InterruptedException {
+    public void connect() {
         // Make sure the client isn't already connected
         if (isConnected) {
             throw new IllegalStateException("Cannot connect while already connected");
@@ -83,13 +91,15 @@ public class Client {
              });
             
         // Connect and grab a reference to the channel
-        this.ch = b.connect(host, port).sync().channel();
+        try {
+            this.ch = b.connect(host, port).sync().channel();
+        } catch (InterruptedException ex) {}
 
         // Mark the client as connected
         isConnected = true;
     }
 
-    public void disconnect() throws InterruptedException {
+    public void disconnect() {
         // Make sure the client is connected before disconnecting
         if (!isConnected) {
             throw new IllegalStateException("Cannot disconnect while not connected");
@@ -99,7 +109,9 @@ public class Client {
         //   because the client closes the connection too early
         // This is a hacky way to make sure that the message actually sends
         // If this stops working, either increase the timer or find a better method
-        Thread.sleep(100);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {}
         
         // Shut down the boss/worker group
         this.group.shutdownGracefully();
@@ -113,26 +125,53 @@ public class Client {
 
     // Request an identity from the server
     public void requestIdentity() {
+        // Wait for the last channel future to finish if need be
+        if (lastChannelFuture != null) {
+            if (!lastChannelFuture.isDone()) {
+                try {
+                    lastChannelFuture.sync();
+                } catch (InterruptedException ex) {}
+            }
+        }
+
         // Make a buffer with the request identity byte
         ByteBuf buf = ch.alloc().buffer(Settings.PACKET_SIZE_REQUEST_IDENTITY_CLIENT);
         buf.writeByte(Settings.PACKET_HEADER_REQUEST_IDENITY);
 
-        ch.writeAndFlush(buf);
+        this.lastChannelFuture = ch.writeAndFlush(buf);
     }
 
     // Request the board state from the server
     public void requestBoardState() {
+        // Wait for the last channel future to finish if need be
+        if (lastChannelFuture != null) {
+            if (!lastChannelFuture.isDone()) {
+                try {
+                    lastChannelFuture.sync();
+                } catch (InterruptedException ex) {}
+            }
+        }
+
         // Make a buffer with the request board state byte
         ByteBuf buf = ch.alloc().buffer(Settings.PACKET_SIZE_REQUEST_BOARD_STATE_CLIENT);
         buf.writeByte(Settings.PACKET_HEADER_REQUEST_BOARD_STATE);
 
-        ch.writeAndFlush(buf);
+        this.lastChannelFuture = ch.writeAndFlush(buf);
     }
 
     // Send a tile click to the server
     // outerCoord should refer to the subboard that the tile is on (0-8, inclusive)
     // innerCoord should refer to the exact tile (0-8, inclusive)
     public void sendButtonPress(int outerCoord, int innerCoord) {
+        // Wait for the last channel future to finish if need be
+        if (lastChannelFuture != null) {
+            if (!lastChannelFuture.isDone()) {
+                try {
+                    lastChannelFuture.sync();
+                } catch (InterruptedException ex) {}
+            }
+        }
+
         // Validate outerCoord and innerCoord
         if (outerCoord < 0 || outerCoord > 8) {
             throw new IllegalArgumentException("outerCoord must be between 0 and 8");
@@ -158,16 +197,25 @@ public class Client {
         buf.writeByte(innerCoord);
 
         // Send the buffer to the server
-        ch.writeAndFlush(buf);
+        this.lastChannelFuture = ch.writeAndFlush(buf);
     }
 
     // Request that the board be reset
     public void requestReset() {
+        // Wait for the last channel future to finish if need be
+        if (lastChannelFuture != null) {
+            if (!lastChannelFuture.isDone()) {
+                try {
+                    lastChannelFuture.sync();
+                } catch (InterruptedException ex) {}
+            }
+        }
+
         // Create a buffer with the correct header
         ByteBuf buf = ch.alloc().buffer(Settings.PACKET_SIZE_RESET_GAME_CLIENT);
         buf.writeByte(Settings.PACKET_HEADER_RESET_GAME);
 
-        ch.writeAndFlush(buf);
+        this.lastChannelFuture = ch.writeAndFlush(buf);
     }
 
     // Change the client's identity
@@ -261,9 +309,36 @@ public class Client {
         return this.timeLastUpdated;
     }
 
+    // Used by the InboundClientHanlder to set when the board has changed
+    //   and by the GUI to set when that change has been read
+    public void setBoardUpdated(boolean b) {
+        this.boardUpdated = b;
+    }
+
+    // Call this from anywhere
+    public boolean getBoardUpdated() {
+        return this.boardUpdated;
+    }
+
     // Check if the client is connected
     public boolean isConnected() {
         return this.isConnected;
+    }
+
+    // Reset the game
+    public void resetGame() {
+        // Reset the turn
+        curTurn = Settings.IDENTITY_X;
+
+        // Reset the superboard and subboard winners
+        winner = Settings.BOARD_WINNER_NULL;
+        subBoardWinners = new byte[9];
+
+        // Reset the superboard
+        superBoard = new byte[9][9];
+
+        // Reset the required subboard to wild
+        requiredSubBoard = 9;
     }
 
     // Reset the state of the client

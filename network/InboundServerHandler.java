@@ -15,6 +15,9 @@ public class InboundServerHandler extends ChannelInboundHandlerAdapter {
     // Keep track of this connection's identity
     private byte identity = Settings.IDENTITY_UNASSIGNED;
 
+    // Keep track of the last channel future
+    private ChannelFuture lastChannelFuture;
+
     public InboundServerHandler(Server server) {
         this.server = server;
     }
@@ -28,8 +31,6 @@ public class InboundServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        //System.out.println("channelActive");
-
         // Get a reference to this so it can be referenced in the close future
         InboundServerHandler h = this;
 
@@ -56,7 +57,15 @@ public class InboundServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ByteBuf buf = (ByteBuf) msg;
-        //System.out.println("channelRead");
+        
+        // Sync the last channel future if need be
+        if (lastChannelFuture != null) {
+            if (!lastChannelFuture.isDone()) {
+                try {
+                    lastChannelFuture.sync();
+                } catch (InterruptedException ex) {}
+            }
+        }
         
         // Switch on the first byte
         switch (buf.readByte()) {
@@ -107,7 +116,7 @@ public class InboundServerHandler extends ChannelInboundHandlerAdapter {
         response.writeByte(this.identity);
 
         // Write the response
-        ctx.writeAndFlush(response);
+        this.lastChannelFuture = ctx.writeAndFlush(response);
     }
 
     private void handleBoardStateRequest(ChannelHandlerContext ctx, ByteBuf buf) {
@@ -133,7 +142,7 @@ public class InboundServerHandler extends ChannelInboundHandlerAdapter {
         response.writeBytes(superBoardToByteBuf(server.getSuperBoard()));
 
         // Write the response
-        ctx.writeAndFlush(response);
+        this.lastChannelFuture = ctx.writeAndFlush(response);
     }
 
     private void handleSendButtonPress(ChannelHandlerContext ctx, ByteBuf buf) {
@@ -167,10 +176,6 @@ public class InboundServerHandler extends ChannelInboundHandlerAdapter {
         // If this point is reached, everything is okay
         // Write no error
         else {
-            System.out.println("Value accepted");
-            System.out.println(outerCoord);
-            System.out.println(server.getRequiredSubBoard());
-
             response.writeByte(Settings.ERROR_VALUE_ACCEPTED);
 
             // Set the corresponding tile in the server's board
@@ -196,12 +201,17 @@ public class InboundServerHandler extends ChannelInboundHandlerAdapter {
                 requiredSubBoard = 9;
             }
 
+            // If the new tile placed results in its subboard being won, set a wild
+            if (checkBoardForWinner(server.getSuperBoard()[outerCoord]) != Settings.BOARD_WINNER_NULL) {
+                requiredSubBoard = 9;
+            }
+
             // Update the server's required subboard
             server.setRequiredSubBoard(requiredSubBoard);
         }
 
         // Send the response to the client
-        ctx.writeAndFlush(response);
+        this.lastChannelFuture = ctx.writeAndFlush(response);
     }
 
     private void handleResetRequest(ChannelHandlerContext ctx, ByteBuf buf) {
@@ -216,7 +226,7 @@ public class InboundServerHandler extends ChannelInboundHandlerAdapter {
         response.writeBytes(superBoardToByteBuf(server.getSuperBoard()));
 
         // Send the response to the client
-        ctx.writeAndFlush(response);
+        this.lastChannelFuture = ctx.writeAndFlush(response);
 
         // On a reset update the time the board was created
         server.setTimeBoardCreated(getCurTime());
@@ -351,8 +361,7 @@ public class InboundServerHandler extends ChannelInboundHandlerAdapter {
             System.out.println("[*] The client has closed the connection.");
         }
         else {
-            //System.out.println("[*] An unknown exception has occured.");
-            cause.printStackTrace();
+            System.out.println("[*] An unknown exception has occured.");
         }
     }
 }
