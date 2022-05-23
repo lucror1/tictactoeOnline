@@ -134,6 +134,7 @@ public class InboundClientHandler extends ChannelInboundHandlerAdapter {
         // Write all the information to the client
         client.setWinner(winner);
         client.setCurrentTurn(curTurn);
+        client.setRequiredSubBoard(requiredSubBoard);
         client.setSubBoardWinners(subBoardWinners);
         client.setBoard(newBoard);
     }

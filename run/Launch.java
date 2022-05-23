@@ -10,6 +10,8 @@ public class Launch {
         // Ex. to run this, put "run.Launch"
         // Then go to the "Run and Debug" menu in VSCode (left side of screen)
         // Select "Launch Client + Server" from the drop down in the menu
+        "network.Server",
+        "Utictactoe.java"
     };
 
     // Generated from CLASS_NAMES
