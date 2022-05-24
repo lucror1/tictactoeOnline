@@ -17,6 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import network.*;
+import javafx.scene.control.TextArea;
 
 public class Utictactoe extends Application
 {
@@ -136,19 +137,19 @@ public class Utictactoe extends Application
         if(!winList.get(0).contains(0)&&!winList.get(1).contains(0)&&!winList.get(2).contains(0))
         {
             winner = 3;
-            //freeze = true;
+            freeze = true;
         }
         for(int i =0; i<3; i++)
         {
             if (winList.get(i).equals(xWins)==true)
             {
                 winner =1;
-                //freeze = true;
+                freeze = true;
             }
             if (winList.get(i).equals(oWins)==true)
             {
                 winner = 2;
-                //freeze = true;
+                freeze = true;
             }
         }
         for(int i =0; i<3; i++)
@@ -160,12 +161,12 @@ public class Utictactoe extends Application
             if (col.equals(xWins)==true)
             {
                 winner = 1;
-                //freeze = true;
+                freeze = true;
             }
             if (col.equals(oWins)==true)
             {
                 winner =2;
-                //freeze = true;
+                freeze = true;
             }
         }
         ArrayList<Integer> diag1= new ArrayList<Integer>();
@@ -175,12 +176,12 @@ public class Utictactoe extends Application
         if (diag1.equals(xWins)==true)
         {
             winner =1;
-            //freeze = true;
+            freeze = true;
         }
         if (diag1.equals(oWins)==true)
         {
             winner =2;
-            //freeze = true;
+            freeze = true;
         }
         ArrayList<Integer> diag2= new ArrayList<Integer>();
         diag2.add(winList.get(0).get(2));
@@ -189,12 +190,12 @@ public class Utictactoe extends Application
         if (diag2.equals(xWins)==true)
         {
             winner = 1;
-            //freeze = true;
+            freeze = true;
         }
         if (diag2.equals(oWins)==true)
         {
             winner = 2;
-            //freeze = true;
+            freeze = true;
         }
         if(winner == 1)
         {
@@ -317,9 +318,12 @@ public class Utictactoe extends Application
         if(winner == 1)
         {
             winList.get(number%3).set(number/3,1);
-            Text Win = new Text();
+            TextArea Win = new TextArea();
             String x="X";
             Win.setText(x);
+            Win.setPrefHeight(160);
+            Win.setPrefWidth(160);
+            Win.setEditable(false);
             Win.setId("fancytext");
             BigGrid.getChildren().remove(result);
             BigGrid.add(Win,number%3,number/3);
@@ -330,10 +334,13 @@ public class Utictactoe extends Application
         {
             winList.get(number%3).set(number/3,2);
 
-            Text Win = new Text();
+            TextArea Win = new TextArea();
             String x="O";
             Win.setText(x);
             Win.setId("fancytext");
+            Win.setPrefHeight(160);
+            Win.setPrefWidth(160);
+            Win.setEditable(false);
             BigGrid.getChildren().remove(result);
             BigGrid.add(Win,number%3,number/3);
             System.out.println(winList);
@@ -343,9 +350,12 @@ public class Utictactoe extends Application
         else if(winner == 3)
         {
             winList.get(number%3).set(number/3,3);
-            Text Win = new Text();
+            TextArea Win = new TextArea();
             String x="";
             Win.setText(x);
+            Win.setPrefHeight(160);
+            Win.setPrefWidth(160);
+            Win.setEditable(false);
             Win.setId("fancytext");
             BigGrid.getChildren().remove(result);
             BigGrid.add(Win,number%3,number/3);
@@ -545,7 +555,7 @@ public class Utictactoe extends Application
             this.x=x;
             this.y=y;
             this.clicked= clicked;
-            setPrefSize(75,75);
+            setPrefSize(50,50);
             setOnAction(e->{
                 // If frozen, do nothing
                 if (freeze) {
