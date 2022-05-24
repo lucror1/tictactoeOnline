@@ -1,5 +1,7 @@
 # Building and running the game
 
+Project by: Adam Fawcett, Luke Pollard, Max Van Fleet, and Paul Warner
+
 ## Automatically building and running (VSCode on Windows only)
 
 1. Open the project in VSCode
