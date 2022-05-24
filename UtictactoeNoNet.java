@@ -23,7 +23,7 @@ public class UtictactoeNoNet extends Application
     public boolean freeze;
     private BorderPane bp;
     private ArrayList<ArrayList<ArrayList<Boolean>>> currentgrid;
-    public Utictactoe()
+    public UtictactoeNoNet()
     {
         winList=new ArrayList<ArrayList<Integer>>();
         currentgrid = new ArrayList<ArrayList<ArrayList<Boolean>>>();
