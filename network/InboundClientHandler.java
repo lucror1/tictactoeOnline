@@ -51,7 +51,7 @@ public class InboundClientHandler extends ChannelInboundHandlerAdapter {
         // Hacky way to prevent a bug that I can't track down
         // Probably has to do with the server sending 2 packets around the same time
         // And the packets getting mixed up or combined
-        if (identity == Settings.BOARD_WINNER_NULL) {
+        if (client.getIdentity() != Settings.BOARD_WINNER_NULL) {
             return;
         }
 
