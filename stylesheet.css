@@ -1,17 +1,27 @@
 .button { 
-   -fx-background-color: #a4d8ff; 
-   -fx-text-fill: #510056; 
+    -fx-background-color: #a4d8ff; 
+    -fx-text-fill: #510056; 
+ }
+ .text
+ {
+    -fx-font: 20px Tahoma;
+    -fx-stroke: #510056;
+    -fx-stroke-width: 3;
+ }
+ #fancytext
+ {
+    -fx-font: 50px Tahoma;
+    -fx-stroke: #510056;
+    -fx-stroke-width: 3;
+    -fx-text-alignment: center;
+ }
+ .text-area {
+   -fx-background-insets: 0;
+   -fx-background-color: transparent, rgb(244, 244, 244), transparent, rgb(244, 244, 244);
 }
-.text
-{
-   -fx-font: 20px Tahoma;
-   -fx-stroke: #510056;
-   -fx-stroke-width: 3;
+.text-area .content {
+   -fx-background-color: text-area-background;
 }
-#fancytext
-{
-   -fx-font: 100px Tahoma;
-   -fx-stroke: #510056;
-   -fx-stroke-width: 3;
+.text-area *.text {
    -fx-text-alignment: center;
 }
