@@ -351,7 +351,7 @@ public class Client {
         ch = null;
         group = null;
 
-        identity = Settings.IDENTITY_UNASSIGNED;
+        //identity = Settings.IDENTITY_UNASSIGNED;
 
         // TODO: should the client handlers be nulled out?
         // Or should their state be reset

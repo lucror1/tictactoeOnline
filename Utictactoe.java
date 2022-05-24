@@ -481,7 +481,7 @@ public class Utictactoe extends Application
         dialog.setTitle("Game finished");
 
         // Set the appropriate win text
-        if (client.getWinner() == client.getIdentity()) {
+        /* if (client.getWinner() == client.getIdentity()) {
             dialog.setContentText("You won!");
         }
         else if (client.getWinner() == Settings.BOARD_WINNER_DRAW) {
@@ -489,7 +489,8 @@ public class Utictactoe extends Application
         }
         else {
             dialog.setContentText("You lost.");
-        }
+        } */
+        dialog.setContentText("Game finished!");
 
         // Add a play again button
         ButtonType b = new ButtonType("Play again", ButtonData.OK_DONE);
