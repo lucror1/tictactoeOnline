@@ -35,5 +35,5 @@ Note: each program will need to be in its own terminal window.
 
 ## Manually running (MacOS, Linux)
 
-1. After compiling, the server can be executed by running `java -cp ./build:./lib/* network.Server <optional port>`
-2. The client can be executed by running `java -cp ./build:./lib/* Utictactoe <optional host> <optional port>`
+1. After compiling, the server can be executed by running `java -cp ./build:./lib/netty-all-4.1.54.Final.jar network.Server <optional port>`
+2. The client can be executed by running `java -cp ./build:./lib/netty-all-4.1.54.Final.jar Utictactoe <optional host> <optional port>`
