@@ -9,7 +9,7 @@ Project by: Adam Fawcett, Luke Pollard, Max Van Fleet, and Paul Warner
 3. Select "Launch Client + Server" from the dropdown menu
 4. Run the project. This will open up 1 server and 2 clients on port 8080
 
-## Manually buliding (Windows)
+## Manually building (Windows)
 
 1. Open up a command prompt and navigate to the "tictactoeOnline" directory
 2. Run `mkdir build` and `mkdir .tmp` to create the necessary build folders
